@@ -1,25 +1,70 @@
-import logo from './logo.svg';
-import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import { Component } from 'react';
+import './App.css';
+import Album from './Components/Album';
+import Navbar from './Components/navbar';
+
+class App extends Component {
+
+  constructor() {
+    super();
+
+    this.state = {
+        albums: [],
+        
+    }
+}
+
+// fetching the json data
+  componentDidMount = async () => {
+
+    fetch('https://jsonplaceholder.typicode.com/albums')
+        .then((response) => response.json())
+        .then((json) => {
+
+            this.setState({
+                albums: json,
+            });
+
+        });
+
+}
+
+// delete album function 
+deleteAlbum = (id) => {
+
+  let newAlbums = this.state.albums.filter((song) => {
+      return song.id !== id
+  });
+
+  this.setState({
+      albums: newAlbums,
+  });
+
+
+  fetch(`https://jsonplaceholder.typicode.com/albums/${id}`, {
+      method: 'DELETE',
+  });
+  alert("Song deleted:");
+
+
+}
+
+  render() {
+    return (
+      <div className="App">
+        <Navbar />
+        {
+          this.state.albums.map((song1)=>{
+
+            return <Album deleteAlbum = {this.deleteAlbum}  key={song1.id} song = {song1}/>
+
+          })
+
+        }
+      </div>
+    );
+  }
 }
 
 export default App;
